@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroCleaner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #ffffff;
+    color: #000000;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 24px;
+    position: relative;
+  }
+
+  /* Пиксельный бейдж версии слева сверху */
+  .version-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    color: #000;
+    text-transform: uppercase;
+    line-height: 1.4;
+    user-select: none;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    flex: 1;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #000;
+    background: #fff;
+  }
+
+  .panel-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #000;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status {
+    font-size: 10px;
+    color: #666;
+    letter-spacing: 0.05em;
+    text-transform: none;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .icon-btn {
+    background: transparent;
+    border: 1px solid #000;
+    color: #000;
+    padding: 4px 10px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+
+  .icon-btn:hover {
+    background: #000;
+    color: #fff;
+  }
+
+  .icon-btn.copied {
+    background: #000;
+    color: #fff;
+  }
+
+  textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    resize: none;
+    padding: 20px;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #000;
+    background: #fff;
+    min-height: 400px;
+  }
+
+  textarea::placeholder {
+    color: #aaa;
+  }
+
+  textarea[readonly] {
+    background: #fafafa;
+  }
+
+  .controls {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    max-width: 1200px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  button {
+    background: #000;
+    color: #fff;
+    border: 1px solid #000;
+    padding: 12px 32px;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  button:hover {
+    background: #fff;
+    color: #000;
+  }
+
+  button:disabled {
+    background: #fff;
+    color: #999;
+    border-color: #999;
+    cursor: wait;
+  }
+
+  button.secondary {
+    background: #fff;
+    color: #000;
+  }
+
+  button.secondary:hover {
+    background: #000;
+    color: #fff;
+  }
+
+  .progress {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    letter-spacing: 0.05em;
+    min-height: 18px;
+  }
+
+  /* Подпись автора снизу */
+  footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      grid-template-columns: 1fr;
+    }
+    textarea {
+      min-height: 220px;
+    }
+    .version-badge {
+      font-size: 8px;
+      top: 12px;
+      left: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="version-badge">Beta 1.0</div>
+
+<header>
+  <h1>NeuroCleaner</h1>
+</header>
+
+<div class="container">
+  <div class="panel">
+    <div class="panel-header">
+      <span>Исходный текст</span>
+      <span class="status">RU</span>
+    </div>
+    <textarea id="input" placeholder="Вставьте или введите текст..."></textarea>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <span>Готовый текст</span>
+      <div class="header-actions">
+        <span class="status" id="outputStatus">—</span>
+        <button class="icon-btn" id="copyBtn" title="Скопировать">Копировать</button>
+      </div>
+    </div>
+    <textarea id="output" readonly placeholder="Здесь появится результат..."></textarea>
+  </div>
+</div>
+
+<div class="controls">
+  <button id="translateBtn">Обработать</button>
+  <button id="clearBtn" class="secondary">Очистить</button>
+</div>
+
+<div class="progress" id="progress"></div>
+
+<footer>Created by LaQu</footer>
+
+<script>
+  const input = document.getElementById('input');
+  const output = document.getElementById('output');
+  const translateBtn = document.getElementById('translateBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const progress = document.getElementById('progress');
+  const outputStatus = document.getElementById('outputStatus');
+
+  input.addEventListener('paste', () => {
+    setTimeout(() => {
+      if (input.value.trim()) runTranslation();
+    }, 50);
+  });
+
+  translateBtn.addEventListener('click', runTranslation);
+
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    output.value = '';
+    progress.textContent = '';
+    outputStatus.textContent = '—';
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    const text = output.value;
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      output.removeAttribute('readonly');
+      output.select();
+      document.execCommand('copy');
+      output.setAttribute('readonly', '');
+      window.getSelection().removeAllRanges();
+    }
+    const original = copyBtn.textContent;
+    copyBtn.textContent = 'Скопировано';
+    copyBtn.classList.add('copied');
+    setTimeout(() => {
+      copyBtn.textContent = original;
+      copyBtn.classList.remove('copied');
+    }, 1500);
+  });
+
+  async function translate(text, from, to) {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text)}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Ошибка сети');
+    const data = await res.json();
+    return data[0].map(item => item[0]).join('');
+  }
+
+  async function runTranslation() {
+    const text = input.value.trim();
+    if (!text) {
+      progress.textContent = 'Введите текст';
+      return;
+    }
+
+    translateBtn.disabled = true;
+    output.value = '';
+    outputStatus.textContent = '...';
+
+    try {
+      progress.textContent = '1/4 → Очистка текста...';
+      const spanish = await translate(text, 'ru', 'es');
+
+      progress.textContent = '2/4 → Доводим до идеала...';
+      const arabic = await translate(spanish, 'es', 'ar');
+
+      progress.textContent = '3/4 → Почти готово...';
+      const english = await translate(arabic, 'ar', 'en');
+
+      progress.textContent = '4/4 → Готово...';
+      const russian = await translate(english, 'en', 'ru');
+
+      output.value = russian;
+      outputStatus.textContent = 'RU';
+      progress.textContent = '✓ Готово';
+    } catch (err) {
+      progress.textContent = 'Ошибка: ' + err.message;
+      outputStatus.textContent = '!';
+    } finally {
+      translateBtn.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>
